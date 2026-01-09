@@ -79,7 +79,7 @@ namespace OfficeTools.ExcelGenerator.Core
             }
         }
 
-        private (string Prefix, int Number, int NumberLength, string Suffix) ParseFileName(string fileName)
+        internal (string Prefix, int Number, int NumberLength, string Suffix) ParseFileName(string fileName)
         {
             var regex = new Regex(@"^([A-Za-z]+)(\d+)(.*)$");
             var match = regex.Match(fileName);
@@ -94,7 +94,7 @@ namespace OfficeTools.ExcelGenerator.Core
                 match.Groups[3].Value);
         }
 
-        private (int BaseIp1, int BaseIp2, DateTime BaseDate) ReadBaseData(string filePath, GeneratorConfig config)
+        internal (int BaseIp1, int BaseIp2, DateTime BaseDate) ReadBaseData(string filePath, GeneratorConfig config)
         {
             using var workbook = new XLWorkbook(filePath);
             var ws = workbook.Worksheet(config.WorksheetIndex);
@@ -120,7 +120,7 @@ namespace OfficeTools.ExcelGenerator.Core
             return (ip1, ip2, date);
         }
 
-        private DateTime GetNextBusinessDay(DateTime date)
+        internal DateTime GetNextBusinessDay(DateTime date)
         {
             do
             {
