@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "OfficeTools\Shared.csproj", "{9C0CD576-ED28-403C-9FDD-58AE8664C1B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelGenerator.Core", "ExcelGenerator\ExcelGenerator.Core.csproj", "{DA371E6F-261C-498C-AA26-398CD7B403C8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9C0CD576-ED28-403C-9FDD-58AE8664C1B3} = {9C0CD576-ED28-403C-9FDD-58AE8664C1B3}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExcelGenerator.Core", "ExcelGenerator.Core", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExcelGenerator.WPF", "ExcelGenerator.WPF", "{CB486BFC-6262-433F-9CD0-A0AA83EC8323}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExcelGenerator", "ExcelGenerator", "{114C1F3F-5E52-461C-A8DB-1CC07206D814}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{69A8D500-4EC3-4B48-81F2-7AB8D48CC885}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C0CD576-ED28-403C-9FDD-58AE8664C1B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C0CD576-ED28-403C-9FDD-58AE8664C1B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C0CD576-ED28-403C-9FDD-58AE8664C1B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C0CD576-ED28-403C-9FDD-58AE8664C1B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA371E6F-261C-498C-AA26-398CD7B403C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA371E6F-261C-498C-AA26-398CD7B403C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA371E6F-261C-498C-AA26-398CD7B403C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA371E6F-261C-498C-AA26-398CD7B403C8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9C0CD576-ED28-403C-9FDD-58AE8664C1B3} = {69A8D500-4EC3-4B48-81F2-7AB8D48CC885}
+		{DA371E6F-261C-498C-AA26-398CD7B403C8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {114C1F3F-5E52-461C-A8DB-1CC07206D814}
+		{CB486BFC-6262-433F-9CD0-A0AA83EC8323} = {114C1F3F-5E52-461C-A8DB-1CC07206D814}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BFA6F68F-C252-4342-96E4-A4B524C63F01}
+	EndGlobalSection
+EndGlobal
