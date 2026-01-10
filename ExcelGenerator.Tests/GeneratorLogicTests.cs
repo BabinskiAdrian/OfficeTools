@@ -12,45 +12,35 @@ namespace OfficeTools.ExcelGenerator.Tests
             _service = new GeneratorService();
         }
 
-
-        [Theory] // Theory pozwala uruchomić ten sam test dla wielu danych
+        [Theory]
         [InlineData("CA050_Raport.xlsx", "CA", 50, "_Raport.xlsx")]
         [InlineData("Test001.xlsx", "Test", 1, ".xlsx")]
         [InlineData("Plik999-Kopia.xls", "Plik", 999, "-Kopia.xls")]
         public void ParseFileName_ShouldCorrectlySplitName(string fileName, string expectedPrefix, int expectedNum, string expectedSuffix)
         {
-            // Act (Wywołanie metody internal)
             var result = _service.ParseFileName(fileName);
 
-            // Assert (Sprawdzenie)
             Assert.Equal(expectedPrefix, result.Prefix);
             Assert.Equal(expectedNum, result.Number);
             Assert.Equal(expectedSuffix, result.Suffix);
         }
 
-        [Fact] // Fact to pojedynczy test
+        [Fact]
         public void ParseFileName_ShouldThrowException_WhenFormatIsInvalid()
         {
-            // Arrange
             string badFileName = "RaportBezNumeru.xlsx";
 
-            // Act & Assert
             Assert.Throws<FormatException>(() => _service.ParseFileName(badFileName));
         }
-
-        // --- TESTOWANIE DAT (GetNextBusinessDay) ---
 
         [Fact]
         public void GetNextBusinessDay_ShouldSkipWeekend_WhenFriday()
         {
-            // Arrange
-            var friday = new DateTime(2023, 10, 27); // Piątek
+            var friday = new DateTime(2023, 10, 27, 0, 0, 0, DateTimeKind.Local);
 
-            // Act
             var nextDay = _service.GetNextBusinessDay(friday);
 
-            // Assert
-            var monday = new DateTime(2023, 10, 30);
+            var monday = new DateTime(2023, 10, 30, 0, 0, 0, DateTimeKind.Local);
             Assert.Equal(monday, nextDay);
         }
 
@@ -58,13 +48,13 @@ namespace OfficeTools.ExcelGenerator.Tests
         public void GetNextBusinessDay_ShouldReturnTuesday_WhenMonday()
         {
             // Arrange
-            var monday = new DateTime(2023, 10, 30);
+            var monday = new DateTime(2023, 10, 30, 0, 0, 0, DateTimeKind.Local);
 
             // Act
             var nextDay = _service.GetNextBusinessDay(monday);
 
             // Assert
-            var tuesday = new DateTime(2023, 10, 31);
+            var tuesday = new DateTime(2023, 10, 31, 0, 0, 0, DateTimeKind.Local);
             Assert.Equal(tuesday, nextDay);
         }
     }
