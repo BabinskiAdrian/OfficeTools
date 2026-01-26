@@ -10,8 +10,12 @@
 
   <ItemGroup>
     <Folder Include="Services\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="View\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExcelGenerator\ExcelGenerator.Core.csproj" />
+    <ProjectReference Include="..\OfficeTools\Shared.csproj" />
   </ItemGroup>
 
 </Project>
