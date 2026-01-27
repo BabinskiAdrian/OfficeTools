@@ -4,127 +4,125 @@ using OfficeTools.Shared;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using WPF.Services;
 
-namespace WPF.ViewModels
+namespace WPF.ViewModels;
+
+public class ExcelGeneratorViewModel : ViewModelBase
 {
-    public class ExcelGeneratorViewModel : ViewModelBase
+    private readonly GeneratorService _generatorService;
+    private readonly IDialogService _dialogService;
+
+    // Backing fields
+    private string _sourceFilePath = string.Empty;
+    private string _statusMessage = "Ready";
+    private bool _isBusy;
+    private int _progressValue;
+    private int _filesCount = 10;
+
+    // Properites bound to the UI elements
+    public string SourceFilePath
     {
-        private readonly GeneratorService _generatorService;
+        get => _sourceFilePath;
+        set => SetProperty(ref _sourceFilePath, value);
+    }
 
-        // Backing fields
-        private string _sourceFilePath = string.Empty;
-        private string _statusMessage = "Finished";
-        private bool _isBusy;
-        private int _progressValue;
-        private int _filesCount = 0;
+    public string StatusMessage
+    {
+        get => _statusMessage;
+        set => SetProperty(ref _statusMessage, value);
+    }
 
-        // Properites bound to the UI elements
-        public string SourceFilePath
+    public int ProgressValue
+    {
+        get => _progressValue;
+        set => SetProperty(ref _progressValue, value);
+    }
+
+    // Locking buttons during processing
+    public bool IsBusy
+    {
+        get => _isBusy;
+        set => SetProperty(ref _isBusy, value);
+    }
+
+    public int FilesCount
+    {
+        get => _filesCount;
+        set => SetProperty(ref _filesCount, value);
+    }
+
+    // Comends bound to buttons
+    public ICommand SelectFileCommand { get; }
+    public ICommand GenerateCommand { get; }
+
+    public ExcelGeneratorViewModel(GeneratorService generatorService, IDialogService dialogService)
+    {
+        _generatorService = generatorService;
+        _dialogService = dialogService;
+
+        // Connecting methods buttons/commands
+        SelectFileCommand = new RelayCommand(_ => SelectFile());
+        GenerateCommand = new RelayCommand(async _ => await GenerateData(), _ => CanGenerate());
+    }
+    
+    // Konstruktor bezparametrowy (Dla podglądu w XAML - opcjonalne, ale przydatne)
+    public ExcelGeneratorViewModel() : this(new GeneratorService(), new DialogService()) { }
+
+    private void SelectFile()
+    {
+        var path = _dialogService.OpenFile("Excel Files|*.xlsx;*.xlsm");
+        if (!string.IsNullOrEmpty(path))
         {
-            get => _sourceFilePath;
-            set => SetProperty(ref _sourceFilePath, value);
+            SourceFilePath = path;
+            StatusMessage = "File selected.";
         }
+    }
 
-        public string StatusMessage
+    private bool CanGenerate()
+    {
+        return !IsBusy 
+            && !string.IsNullOrWhiteSpace(SourceFilePath) 
+            && File.Exists(SourceFilePath);
+    }
+
+    private async Task GenerateData()
+    {
+        IsBusy = true;
+        StatusMessage = "Generation in progress....";
+        ProgressValue = 0;
+
+        try
         {
-            get => _statusMessage;
-            set => SetProperty(ref _statusMessage, value);
-        }
-
-        public int ProgressValue
-        {
-            get => _progressValue;
-            set => SetProperty(ref _progressValue, value);
-        }
-
-        // Locking buttons during processing
-        public bool IsBusy
-        {
-            get => _isBusy;
-            set => SetProperty(ref _isBusy, value);
-        }
-
-        public int FilesCount
-        {
-            get => _filesCount;
-            set => SetProperty(ref _filesCount, value);
-        }
-
-        // Comends bound to buttons
-        public ICommand SelectFileCommand { get; }
-        public ICommand GenerateCommand { get; }
-
-        public ExcelGeneratorViewModel()
-        {
-            _generatorService = new GeneratorService();
-
-            // Connecting methods buttons/commands
-            SelectFileCommand = new RelayCommand(_ => SelectFile());
-            GenerateCommand = new RelayCommand(async _ => await GenerateData(), _ => CanGenerate());
-        }
-
-        private void SelectFile()
-        {
-            // Standard window for file selection
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            // TODO: update configuration, to get values from UI
+            var config = new GeneratorConfig
             {
-                Filter = "Excel Files|*.xlsx;*.xlsm",
-                Title = "Wybierz plik wzorcowy"
+                OutputDirectory = Path.Combine(Path.GetDirectoryName(SourceFilePath)!, "Wyniki"),
+                FilesCount = FilesCount,
+                CarriersPerDay = 2,
+                WorksheetIndex = 2
             };
 
-            if (openFileDialog.ShowDialog() == true)
+            // Porgress reporting
+            var progress = new Progress<GeneratorProgress>(p =>
             {
-                SourceFilePath = openFileDialog.FileName;
-                StatusMessage = "Wybrano plik. Gotowy do startu.";
-            }
+                ProgressValue = p.Percentage;
+                StatusMessage = p.Message;
+            });
+
+            await _generatorService.GenerateAsync(SourceFilePath, config, progress);
+
+            StatusMessage = "Success! Generation completed.";
+            _dialogService.ShowMessage("Files have been generated!", "Success");
         }
-
-        private bool CanGenerate()
+        catch (Exception ex)
         {
-            return 
-                !IsBusy 
-                && !string.IsNullOrWhiteSpace(SourceFilePath) 
-                && File.Exists(SourceFilePath);
+            StatusMessage = "Error!"; 
+            _dialogService.ShowError($"An error occurred: {ex.Message}", "Critical Error");
         }
-
-        private async Task GenerateData()
+        finally
         {
-            IsBusy = true;
-            StatusMessage = "Generowanie w toku...";
-            ProgressValue = 0;
-
-            try
-            {
-                // TODO: update configuration, to get values from UI
-                var config = new GeneratorConfig
-                {
-                    OutputDirectory = Path.Combine(Path.GetDirectoryName(SourceFilePath)!, "Wyniki"),
-                    FilesCount = FilesCount,
-                    CarriersPerDay = 2,
-                    WorksheetIndex = 2
-                };
-
-                // Porgress reporting
-                var progress = new Progress<GeneratorProgress>(p =>
-                {
-                    ProgressValue = p.Percentage;
-                    StatusMessage = p.Message;
-                });
-
-                await _generatorService.GenerateAsync(SourceFilePath, config, progress);
-
-                StatusMessage = "Success! Generation completed.";
-                MessageBox.Show("Files have been generated!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = "Error!";
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            finally
-            {
-                IsBusy = false; // Unlock buttons
-            }
+            IsBusy = false; // Unlock buttons
         }
     }
 }
