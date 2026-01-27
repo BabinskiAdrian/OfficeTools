@@ -1,4 +1,5 @@
 ﻿using OfficeTools.ExcelGenerator.Core;
+using OfficeTools.Shared;
 using Xunit;
 
 namespace OfficeTools.ExcelGenerator.Tests
@@ -38,7 +39,7 @@ namespace OfficeTools.ExcelGenerator.Tests
         {
             var friday = new DateTime(2023, 10, 27, 0, 0, 0, DateTimeKind.Local);
 
-            var nextDay = _service.GetNextBusinessDay(friday);
+            var nextDay = DateHelper.GetNextBusinessDay(friday);
 
             var monday = new DateTime(2023, 10, 30, 0, 0, 0, DateTimeKind.Local);
             Assert.Equal(monday, nextDay);
@@ -51,7 +52,7 @@ namespace OfficeTools.ExcelGenerator.Tests
             var monday = new DateTime(2023, 10, 30, 0, 0, 0, DateTimeKind.Local);
 
             // Act
-            var nextDay = _service.GetNextBusinessDay(monday);
+            var nextDay = DateHelper.GetNextBusinessDay(monday);
 
             // Assert
             var tuesday = new DateTime(2023, 10, 31, 0, 0, 0, DateTimeKind.Local);

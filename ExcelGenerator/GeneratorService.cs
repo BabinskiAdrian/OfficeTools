@@ -1,7 +1,10 @@
 ﻿using ClosedXML.Excel;
 using OfficeTools.ExcelGenerator.Core.Models;
 using OfficeTools.Shared;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+
+[assembly: InternalsVisibleTo("OfficeTools.ExcelGenerator.Tests")]
 
 namespace OfficeTools.ExcelGenerator.Core;
 
@@ -38,7 +41,7 @@ public class GeneratorService
 
             UpdateState(state, i, config);
 
-            GenerateSingleFile(baseFilePath, config.OutputDirectory, fileNameParts, state);
+            GenerateSingleFile(baseFilePath, config.OutputDirectory, fileNameParts, state, config);
 
             string fileName = BuildFileName(fileNameParts, state.CurrentNumber);
             progress?.Report(new GeneratorProgress(i + 1, config.FilesCount, $"Create: {fileName}"));
@@ -55,13 +58,13 @@ public class GeneratorService
             throw new InvalidOperationException("IP octet out of range (255)");
 
         if (config.CarriersPerDay > 0 && iterationIndex > 0 && iterationIndex % config.CarriersPerDay == 0)
-            state.CurrentDate = GetNextBusinessDay(state.CurrentDate);
+            state.CurrentDate = DateHelper.GetNextBusinessDay(state.CurrentDate);
 
-        if (iterationIndex == 0 && IsWeekend(state.CurrentDate))
-            state.CurrentDate = GetNextBusinessDay(state.CurrentDate);
+        if (iterationIndex == 0 && DateHelper.IsWeekend(state.CurrentDate))
+            state.CurrentDate = DateHelper.GetNextBusinessDay(state.CurrentDate);
     }
 
-    private static void GenerateSingleFile(string sourcePath, string outputDir, (string Prefix, int Number, int Len, string Suffix) nameParts, GenerationState state)
+    private static void GenerateSingleFile(string sourcePath, string outputDir, (string Prefix, int Number, int Len, string Suffix) nameParts, GenerationState state, GeneratorConfig config)
     {
         string newFileName = BuildFileName(nameParts, state.CurrentNumber);
         string destPath = Path.Combine(outputDir, newFileName);
@@ -71,17 +74,25 @@ public class GeneratorService
             File.Copy(sourcePath, destPath, overwrite: true);
 
             using var workbook = new XLWorkbook(destPath);
-            // TODO: default worksheet, change to read from config
-            var ws = workbook.Worksheet(1);
+            var ws = workbook.Worksheet(config.WorksheetIndex);
 
-            // TODO: default cell, change to read form config
-            ws.Cell(1, 1).Value = state.CurrentNumber.ToString().PadLeft(nameParts.Len, '0');
-                         
+            // Name
+            var numCell = ws.Cell(config.DeviceNumberCell.Row, config.DeviceNumberCell.Column);
+            numCell.Value = state.CurrentNumber.ToString().PadLeft(nameParts.Len, '0');
+            numCell.Style.NumberFormat.Format = "@";
+
+            // IP
+            ws.Cell(config.DeviceIp1Cell.Row, config.DeviceIp1Cell.Column).Value = state.Ip1;
+            ws.Cell(config.DeviceIp2Cell.Row, config.DeviceIp2Cell.Column).Value = state.Ip2;
+
+            // Date
+            ws.Cell(config.DateCell.Row, config.DateCell.Column).Value = state.CurrentDate;
+
             workbook.Save();
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Nie udało się wygenerować pliku {newFileName}. Powód: {ex.Message}", ex);
+            throw new InvalidOperationException($"Failed to generate file {newFileName}. Reason: {ex.Message}", ex);
         }
     }
 
@@ -132,17 +143,4 @@ public class GeneratorService
 
         return (ip1, ip2, date);
     }
-
-    internal static DateTime GetNextBusinessDay(DateTime date)
-    {
-        do
-        {
-            date = date.AddDays(1);
-        }
-        while (IsWeekend(date));
-
-        return date;
-    }
-
-    private static bool IsWeekend(DateTime date) => date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
 }
