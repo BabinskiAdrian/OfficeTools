@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace OfficeTool.Ui.Views;
 
-public partial class MainMenuView : UserControl
+public partial class BackupConfigsView : UserControl
 {
-    public MainMenuView()
+    public BackupConfigsView()
     {
         InitializeComponent();
     }

@@ -15,9 +15,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         _dialogService = dialogService;
 
-        // Startujemy z widokiem Menu. Przekazujemy mu metodę "Navigate", 
-        // żeby Menu mogło samo przełączać strony!
-        _currentPage = new MainMenuViewModel(Navigate);
+        _currentPage = new MainMenuViewModel(Navigate, _dialogService);
     }
 
     // Konstruktor dla Designera

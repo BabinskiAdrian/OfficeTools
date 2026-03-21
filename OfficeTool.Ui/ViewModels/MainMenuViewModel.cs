@@ -1,19 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using OfficeTool.Core.Services;
 using System;
 
 namespace OfficeTool.Ui.ViewModels;
 
 public partial class MainMenuViewModel : ViewModelBase
 {
-    // Ta "akcja" to pilot do telewizora. Menu używa jej, by przełączyć kanał (stronę) w głównym oknie.
-    private readonly Action<ViewModelBase> _navigateAction;
+    private readonly Action<ViewModelBase> _navigateAction;  // For changeing view in run-time
+    private readonly IDialogService? _dialogService;
 
-    public MainMenuViewModel(Action<ViewModelBase> navigateAction)
+    // Main constructor
+    public MainMenuViewModel(Action<ViewModelBase> navigateAction, IDialogService dialogService)
     {
         _navigateAction = navigateAction;
+        _dialogService = dialogService;
     }
 
-    // Pusty konstruktor wymagany dla designera Avalonii (podglądu na żywo)
+    // Constructor for live view Avalonii's designer
     public MainMenuViewModel()
     {
         _navigateAction = (_) => { };
@@ -22,12 +25,15 @@ public partial class MainMenuViewModel : ViewModelBase
     [RelayCommand]
     private void OpenBackupConfigsChanger()
     {
-        // Tutaj w przyszłości powiemy: _navigateAction(new BackupConfigsViewModel());
-        // Na razie zostawiamy puste, aż stworzymy ten nowy ekran.
+        // Open new view/window
+        if (_dialogService != null)
+        {
+            _navigateAction(new BackupConfigsViewModel(_dialogService, _navigateAction));
+        }
     }
 
     [RelayCommand]
-    private void OpenExcelToNewExcels()
+    private void OpenNewExcelsGenerator()
     {
         // Tutaj w przyszłości powiemy: _navigateAction(new ExcelGeneratorViewModel());
     }

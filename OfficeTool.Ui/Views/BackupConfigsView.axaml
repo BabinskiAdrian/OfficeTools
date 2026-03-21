@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OfficeTool.Ui.ViewModels"
+             x:Class="OfficeTool.Ui.Views.BackupConfigsView"
+             x:DataType="vm:BackupConfigsViewModel">
+    
+    <StackPanel Margin="20" Spacing="15">
+        
+        <Button Content="← Wróć do menu" 
+                Command="{Binding GoBackCommand}" 
+                Background="Transparent" 
+                Foreground="LightGray"
+                Cursor="Hand"/>
+                
+        <TextBlock Text="Modyfikator Configów ZIP" FontSize="22" FontWeight="Bold" />
+
+        <Border Background="#c0c0c0" CornerRadius="8" Padding="15">
+            <StackPanel Spacing="10">
+                
+                <TextBlock Text="1. Plik bazowy (.zip):" FontWeight="SemiBold"/>
+                <Grid ColumnDefinitions="*, Auto">
+                    <TextBox Text="{Binding BaseZipPath}" IsReadOnly="True" Grid.Column="0" Margin="0,0,10,0"/>
+                    <Button Content="Wybierz..." Command="{Binding PickBaseZipCommand}" Grid.Column="1"/>
+                </Grid>
+
+                <TextBlock Text="2. Folder docelowy:" Margin="0,10,0,0" FontWeight="SemiBold"/>
+                <Grid ColumnDefinitions="*, Auto">
+                    <TextBox Text="{Binding DestinationFolderPath}" IsReadOnly="True" Grid.Column="0" Margin="0,0,10,0"/>
+                    <Button Content="Wybierz..." Command="{Binding PickDestinationFolderCommand}" Grid.Column="1"/>
+                </Grid>
+
+                <TextBlock Text="3. Ilość nowych plików:" Margin="0,10,0,0" FontWeight="SemiBold"/>
+                <NumericUpDown Value="{Binding AmountOfFiles}" Minimum="1" Maximum="1000" HorizontalAlignment="Left" Width="150"/>
+
+                <TextBlock Text="4. Tryb generowania (zastępuje dawne Menu):" Margin="0,10,0,0" FontWeight="SemiBold"/>
+                <ComboBox SelectedIndex="{Binding GenerationMode}" HorizontalAlignment="Left" Width="250">
+                    <ComboBoxItem>Tylko w górę (Up)</ComboBoxItem>
+                    <ComboBoxItem>Tylko w dół do 0001 (Down)</ComboBoxItem>
+                    <ComboBoxItem>W górę i w dół do 0001 (Both)</ComboBoxItem>
+                </ComboBox>
+                
+            </StackPanel>
+        </Border>
+
+        <Button Content="Generuj pliki konfiguracji" 
+                Command="{Binding GenerateCommand}" 
+                HorizontalAlignment="Right" 
+                Padding="20,10"
+                FontWeight="Bold"
+                Background="#0078d7"
+                Foreground="White"/>
+                
+    </StackPanel>
+</UserControl>
