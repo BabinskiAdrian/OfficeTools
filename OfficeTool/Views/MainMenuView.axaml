@@ -1,0 +1,37 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OfficeTool.Ui.ViewModels"
+             x:Class="OfficeTool.Ui.Views.MainMenuView"
+             x:DataType="vm:MainMenuViewModel">
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="30">
+        
+        <TextBlock Text="Wybierz narzędzie:" 
+                   FontSize="24" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center" />
+        
+        <UniformGrid Columns="2" Rows="1" HorizontalAlignment="Center">
+            
+            <Button Command="{Binding OpenBackupConfigsChangerCommand}"
+                    Width="250" Height="120" Margin="10"
+                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                    Background="#2d2d2d">
+                <TextBlock Text="Modyfikator Configów ZIP&#x0a;(Backup Configs Changer)" 
+                           TextAlignment="Center" 
+                           FontWeight="Medium"/>
+            </Button>
+                    
+            <Button Command="{Binding OpenExcelToNewExcelsCommand}"
+                    Width="250" Height="120" Margin="10"
+                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                    Background="#2d2d2d">
+                <TextBlock Text="Generator Nowych Exceli&#x0a;(Excel To New Excels)" 
+                           TextAlignment="Center" 
+                           FontWeight="Medium"/>
+            </Button>
+
+        </UniformGrid>
+        
+    </StackPanel>
+</UserControl>

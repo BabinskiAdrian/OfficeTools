@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="OfficeTool.Core/OfficeTool.Core.csproj" />
+  <Project Path="OfficeTool.Infrastructure/OfficeTool.Infrastructure.csproj" />
+  <Project Path="OfficeTool.Ui/OfficeTool.Ui.csproj" />
+</Solution>
