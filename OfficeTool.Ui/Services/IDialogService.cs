@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace OfficeTool.Core.Services;
+namespace OfficeTool.Ui.Services;
 
 /// <summary>
 /// Communication with systems dialogs window
