@@ -4,51 +4,106 @@
              x:Class="OfficeTool.Ui.Views.BackupConfigsView"
              x:DataType="vm:BackupConfigsViewModel">
     
-    <StackPanel Margin="20" Spacing="15">
-        
-        <Button Content="← Wróć do menu" 
-                Command="{Binding GoBackCommand}" 
-                Background="Transparent" 
-                Foreground="LightGray"
-                Cursor="Hand"/>
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="15">
+            
+            <Button Content="← Wróć do menu" 
+                    Command="{Binding GoBackCommand}" 
+                    Background="Transparent" 
+                    Foreground="LightGray"
+                    Cursor="Hand"/>
+                    
+            <TextBlock Text="Modyfikator Configów ZIP" FontSize="22" FontWeight="Bold" />
+
+            <Border Background="#c0c0c0" CornerRadius="8" Padding="15">
+                <StackPanel Spacing="10">
+                    
+                    <TextBlock Text="1. Plik bazowy (.zip):" 
+                               FontWeight="SemiBold"/>
+                    <Grid ColumnDefinitions="*, Auto">
+                        <TextBox Text="{Binding BaseZipPath}" 
+                                 IsReadOnly="True" Grid.Column="0" 
+                                 Margin="0,0,10,0"/>
+                        <Button Content="Wybierz..." 
+                                Command="{Binding PickBaseZipCommand}" 
+                                Grid.Column="1"/>
+                    </Grid>
+                    
+                    <TextBlock Text="(Adres IP z pliku zostanie odczytany automatycznie po jego wybraniu)" 
+                               FontStyle="Italic" Foreground="Gray" FontSize="12" Margin="0,-5,0,5"/>
+
+                    <TextBlock Text="2. Folder docelowy:" Margin="0,5,0,0" FontWeight="SemiBold"/>
+                    <Grid ColumnDefinitions="*, Auto">
+                        <TextBox Text="{Binding DestinationFolderPath}" IsReadOnly="True" Grid.Column="0" Margin="0,0,10,0"/>
+                        <Button Content="Wybierz..." Command="{Binding PickDestinationFolderCommand}" Grid.Column="1"/>
+                    </Grid>
+
+                    <TextBlock Text="3. Metoda powielania i zakres:" Margin="0,15,0,0" FontWeight="SemiBold"/>
+                    
+                    <StackPanel Spacing="15" Margin="10,0,0,0">
+                        
+                        <RadioButton Content="Klonuj w górę (podaj ilość plików do wygenerowania):" 
+                                     IsChecked="{Binding IsAmountMode}" 
+                                     GroupName="GenerationMethod"/>
+                                     
+                        <NumericUpDown Value="{Binding AmountOfFiles}" 
+                                       IsEnabled="{Binding IsAmountMode}"
+                                       FormatString="0" 
+                                       Minimum="1" Maximum="10000" 
+                                       HorizontalAlignment="Left" Width="150" Margin="25,0,0,0"/>
+                        
+                        <RadioButton Content="Generuj dla określonego zakresu IP:" 
+                                     IsChecked="{Binding !IsAmountMode}" 
+                                     GroupName="GenerationMethod"/>
+                                     
+                        <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto" Margin="25,0,0,0" IsEnabled="{Binding !IsAmountMode}">
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Od:" VerticalAlignment="Center" Margin="0,0,15,10" FontWeight="SemiBold"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,10">
+                                <NumericUpDown Value="{Binding StartOctet1}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" Width="55"/>
+                                <TextBlock Text="." VerticalAlignment="Bottom" FontSize="20" Margin="2,0,2,5"/>
+                                <NumericUpDown Value="{Binding StartOctet2}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" Width="55"/>
+                                <TextBlock Text="." VerticalAlignment="Bottom" FontSize="20" Margin="2,0,2,5"/>
+                                <NumericUpDown Value="{Binding StartOctet3}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" Width="55"/>
+                                <TextBlock Text="." VerticalAlignment="Bottom" FontSize="20" Margin="2,0,2,5"/>
+                                <NumericUpDown Value="{Binding StartOctet4}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" Width="55"/>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Do:" VerticalAlignment="Center" Margin="0,0,15,0" FontWeight="SemiBold"/>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                                <NumericUpDown Value="{Binding EndOctet1}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" Width="55"/>
+                                <TextBlock Text="." VerticalAlignment="Bottom" FontSize="20" Margin="2,0,2,5"/>
+                                <NumericUpDown Value="{Binding EndOctet2}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" Width="55"/>
+                                <TextBlock Text="." VerticalAlignment="Bottom" FontSize="20" Margin="2,0,2,5"/>
+                                <NumericUpDown Value="{Binding EndOctet3}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" Width="55"/>
+                                <TextBlock Text="." VerticalAlignment="Bottom" FontSize="20" Margin="2,0,2,5"/>
+                                <NumericUpDown Value="{Binding EndOctet4}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" Width="55"/>
+                            </StackPanel>
+
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="15" Margin="0,10,0,0">
                 
-        <TextBlock Text="Modyfikator Configów ZIP" FontSize="22" FontWeight="Bold" />
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <TextBlock Text="Do wygenerowania:" FontSize="12" Foreground="Gray" HorizontalAlignment="Right"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding CalculatedTotalFiles}" FontSize="18" FontWeight="Bold" Foreground="LightSkyBlue"/>
+                        <TextBlock Text=" plików" FontSize="18" FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
 
-        <Border Background="#c0c0c0" CornerRadius="8" Padding="15">
-            <StackPanel Spacing="10">
-                
-                <TextBlock Text="1. Plik bazowy (.zip):" FontWeight="SemiBold"/>
-                <Grid ColumnDefinitions="*, Auto">
-                    <TextBox Text="{Binding BaseZipPath}" IsReadOnly="True" Grid.Column="0" Margin="0,0,10,0"/>
-                    <Button Content="Wybierz..." Command="{Binding PickBaseZipCommand}" Grid.Column="1"/>
-                </Grid>
-
-                <TextBlock Text="2. Folder docelowy:" Margin="0,10,0,0" FontWeight="SemiBold"/>
-                <Grid ColumnDefinitions="*, Auto">
-                    <TextBox Text="{Binding DestinationFolderPath}" IsReadOnly="True" Grid.Column="0" Margin="0,0,10,0"/>
-                    <Button Content="Wybierz..." Command="{Binding PickDestinationFolderCommand}" Grid.Column="1"/>
-                </Grid>
-
-                <TextBlock Text="3. Ilość nowych plików:" Margin="0,10,0,0" FontWeight="SemiBold"/>
-                <NumericUpDown Value="{Binding AmountOfFiles}" Minimum="1" Maximum="1000" HorizontalAlignment="Left" Width="150"/>
-
-                <TextBlock Text="4. Tryb generowania (zastępuje dawne Menu):" Margin="0,10,0,0" FontWeight="SemiBold"/>
-                <ComboBox SelectedIndex="{Binding GenerationMode}" HorizontalAlignment="Left" Width="250">
-                    <ComboBoxItem>Tylko w górę (Up)</ComboBoxItem>
-                    <ComboBoxItem>Tylko w dół do 0001 (Down)</ComboBoxItem>
-                    <ComboBoxItem>W górę i w dół do 0001 (Both)</ComboBoxItem>
-                </ComboBox>
-                
+                <Button Content="GENERUJ" 
+                        Command="{Binding GenerateCommand}" 
+                        Padding="30,15"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Background="#0078d7"
+                        Foreground="White"/>
             </StackPanel>
-        </Border>
-
-        <Button Content="Generuj pliki konfiguracji" 
-                Command="{Binding GenerateCommand}" 
-                HorizontalAlignment="Right" 
-                Padding="20,10"
-                FontWeight="Bold"
-                Background="#0078d7"
-                Foreground="White"/>
-                
-    </StackPanel>
+                    
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
